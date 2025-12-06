@@ -1,11 +1,9 @@
-import dpsLogo from './assets/DPS.svg';
-import './App.css';
-
 function App() {
 	return (
-		<>
-			<p className="text-red-500">Let's start!</p>
-		</>
+		<section className="w-full h-screen flex justify-center items-center bg-yellow-50">
+			
+			<h1>hello</h1>
+		</section>
 	);
 }
 
