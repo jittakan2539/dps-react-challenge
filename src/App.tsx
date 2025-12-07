@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Map from "./assets/map-606538_1280.png";
 
 interface PostalOption {
 	postalCode: string;
@@ -123,49 +124,66 @@ function App() {
 	}, [postalCode]);
 
 	return (
-		<section className="w-full h-screen flex justify-center items-start bg-yellow-50">
-			<article className="flex flex-col items-center gap-2">
-				<h1 className="text-5xl mt-20">Town/City and Postal Search System</h1>
-				
-				{/* Town/City Input */}
-				<form className="mt-10">
-					<label htmlFor="" className="text-3xl px-3">Town/City</label>
-					<input
-						value={town} 
-						onChange={handleChangeTown} 
-						className="mt-2 px-2 bg-white border rounded-2xl " 
-						type="text" 
-					/>
+		<section className="w-full h-full flex justify-center items-start bg-neutral-100">
+			<div className="mx-10 flex flex-col items-center gap-2 w-full">
+				<h1 className="text-4xl text-center mt-20 md:text-5xl">Town/City and Postal <br className="visible sm:hidden"/>Search System</h1>
+				<p className="">Created by <b>Kan Jittapramoulboon</b>.</p>
+				<article className="text-base sm:text-lg md:text-xl">
+					<p className="mt-5 ">This application will help you search for the postal code or the town or city name.</p>
+					<ul className="mt-5 pl-5 list-disc">
+						<li>Insert the <b>town/city name</b> to search for the <b>postal code</b></li>
+						<li>Insert the <b>postal code number</b> to search for the <b>number</b></li>
+					</ul>
+				</article>
 
-					{/* Postal Code */}
-					<label htmlFor="" className="text-3xl px-3">Postal Code</label>
-					{postalOptions.length > 1 ? (
-						<select 
-							id="postalCodeId" 
-							value={postalCode} 
-							onChange={handleChoosePostalCode}
-							className="mt-2 px-2 bg-white border rounded-2xl"
-						>
-							<option value="" disabled>Select a postal code from the list.</option>
-							{postalOptions.map((option: PostalOption) => (
-								<option key={option.postalCode} value={option.postalCode}>
-									{option.postalCode}
-								</option>
-							))}
-						</select>
-					) : (
+				{/* Town/City Input */}
+				<form 
+					className="mt-10 p-5 rounded-2xl w-full flex flex-col gap-3 justify-center items-start bg-gray-300 lg:flex-row lg:w-[800px] lg:items-center
+
+				">
+					<label className="text-sm px-3 flex justify-center items-center gap-2 w-full sm:text-lg md:text-xl">
+						<h2>Town/City</h2>
 						<input
-							value={postalCode}
-							onChange={handleChangePostalCode}
-							className="mt-2 px-2 bg-white border rounded-2xl " 
+							value={town} 
+							onChange={handleChangeTown} 
+							className="px-2 bg-white border rounded-lg w-full" 
 							type="text" 
 						/>
-					)}
+					</label>
+
+					{/* Postal Code */}
+					<label className="text-sm px-3 flex justify-center items-center gap-2 w-full sm:text-lg md:text-xl">
+						Postal Code
+						{postalOptions.length > 1 ? (
+							<select 
+								id="postalCodeId" 
+								value={postalCode} 
+								onChange={handleChoosePostalCode}
+								className="px-2 bg-white border rounded-lg "
+							>
+								<option value="" disabled className="">Select a postal code from the list.</option>
+								{postalOptions.map((option: PostalOption) => (
+									<option key={option.postalCode} value={option.postalCode}>
+										{option.postalCode}
+									</option>
+								))}
+							</select>
+						) : (
+							<input
+								value={postalCode}
+								onChange={handleChangePostalCode}
+								className="px-2 bg-white border rounded-lg w-full" 
+								type="text" 
+							/>
+						)}
+					</label>
 				</form>
 				<h2 className="mt-10 text-2xl font-bold text-red-500">{errorMessage}</h2>
-
-			</article>
-
+				<figure className="bg-white w-full rounded-3xl lg:w-[800px]">
+					<img className="object-contain w-full max-h-[300px] md:max-h-[500px]" src={Map} alt="Image by Uwe Beier from Pixabay" />
+				</figure>
+				<figcaption>Image by Uwe Beier from Pixabay</figcaption>
+			</div>
 		</section>
 	);
 }
