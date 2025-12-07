@@ -92,15 +92,12 @@ function App() {
 		const backendUrl= "https://openplzapi.org/de/"
 		try {
 			const url = backendUrl + 'Localities?postalCode=' + postalCodeNumber;
-			console.log('url', url);
 			const response = await fetch(url);
 			if (!response.ok) {
 				throw new Error(`Response status: ${response.status}`);
 			}
 
 			const result = await response.json();
-			console.log('result', result);
-
 
 			if (result.length === 0) {
 				setTown("");
