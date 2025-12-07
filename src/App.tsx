@@ -11,12 +11,15 @@ function App() {
 	const [postalCode, setPostalCode] = useState<string>("");
 	const [postalOptions, setPostalOptions] = useState<PostalOption[]>([]);
 	const [errorMessage, setErrorMessage] = useState<string>("");
+	const [updatingFromTown, setUpdatingFromTown] = useState(false);
+	const [updatingFromPostal, setUpdatingFromPostal] = useState(false);
 
 	
 	//------1. Town Input--------------//
 	// Insert Town/City
 	const handleChangeTown = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		const town = event.target.value;
+		setUpdatingFromTown(true);
 		setTown(town);
 
 		//Reset if input in empty
@@ -30,6 +33,7 @@ function App() {
 
 	//Town/City: Fetch postal code
 	const fetchTownResults = async (townName: string) => {
+		setUpdatingFromTown(false);
 		const backendUrl= "https://openplzapi.org/de/"
 		try {
 			const url = backendUrl + 'Localities?name=' + townName;
@@ -40,12 +44,12 @@ function App() {
 
 			const postalArray = await response.json();
 
-			//If town has one postalCode
+			//If town has one postal Code
 			if (postalArray.length === 1) {
 				setPostalCode(postalArray[0].postalCode)
 				setPostalOptions([]);
 				setErrorMessage("");
-			//If town has more than one postalCodes
+			//If town has more than one postal Codes
 			} else if (postalArray.length > 1) {
 				setPostalCode("");
 				setPostalOptions(postalArray);
@@ -61,7 +65,13 @@ function App() {
 	}
 
 	useEffect(() => {
-		if (town.trim() === "") return; // no need to fetch if empty
+		if (!updatingFromTown) return;
+
+		if (town.trim() === "") {
+			setPostalCode("");
+			setPostalOptions([]);
+			return;
+		}
 
 		const handler = setTimeout(() => {
 			fetchTownResults(town);
@@ -79,6 +89,7 @@ function App() {
 	// Get Town/City Name from postalCode (UNFINISHED)
 	const handleChangePostalCode = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		const postalCode = event.target.value;
+		setUpdatingFromPostal(true);
 		setPostalCode(postalCode);
 
 		//Check if input is empty
@@ -90,6 +101,7 @@ function App() {
 
 	//Postal Code: Fetch Town/City
 	const fetchPostalResults = async (postalCodeNumber: string) => {
+		setUpdatingFromPostal(false);
 		const backendUrl= "https://openplzapi.org/de/"
 		try {
 			const url = backendUrl + 'Localities?postalCode=' + postalCodeNumber;
@@ -112,9 +124,14 @@ function App() {
 		}
 	}
 
-	//Debouncer for Wotn Input
+	//Debouncer for Postal Code Input
 	useEffect(() => {
-		if (postalCode.trim() === "") return; // no need to fetch if empty
+		if (!updatingFromPostal) return;
+
+		if (postalCode.trim() === "") {
+			setTown("");
+			return;
+		}
 
 		const handler = setTimeout(() => {
 			fetchPostalResults(postalCode);
@@ -126,7 +143,7 @@ function App() {
 	return (
 		<section className="w-full h-full flex justify-center items-start bg-neutral-100">
 			<div className="mx-10 flex flex-col items-center gap-2 w-full">
-				<h1 className="text-4xl text-center mt-20 md:text-5xl">Town/City and Postal <br className="visible sm:hidden"/>Search System</h1>
+				<h1 className="text-4xl text-center mt-20 md:text-5xl">German Address Validator</h1>
 				<p className="">Created by <b>Kan Jittapramoulboon</b>.</p>
 				<article className="text-base sm:text-lg md:text-xl">
 					<p className="mt-5 ">This application will help you search for the postal code or the town or city name.</p>
