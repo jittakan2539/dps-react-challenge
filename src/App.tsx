@@ -19,14 +19,12 @@ function App() {
 		const backendUrl= "https://openplzapi.org/de/"
 		try {
 			const url = backendUrl + 'Localities?name=' + town;
-			console.log('url', url);
 			const response = await fetch(url);
 			if (!response.ok) {
 				throw new Error(`Response status: ${response.status}`);
 			}
 
 			const postalArray = await response.json();
-			console.log('postalArray', postalArray);
 
 			//If town has one postalCode
 			if (postalArray.length === 1) {
@@ -38,7 +36,6 @@ function App() {
 				setPostalOptions(postalArray);
 				setErrorMessage("");
 			} else {
-				console.log('This town deoes not exist in our database.')
 				setPostalCode("");
 				setErrorMessage("This town does not exist.");
 			}
@@ -60,7 +57,7 @@ function App() {
 
 		const backendUrl= "https://openplzapi.org/de/"
 		try {
-			const url = backendUrl + 'Localities?name=' + town;
+			const url = backendUrl + 'Localities?postalCode=' + postalCode;
 			console.log('url', url);
 			const response = await fetch(url);
 			if (!response.ok) {
@@ -69,52 +66,59 @@ function App() {
 
 			const result = await response.json();
 			console.log('result', result);
-			console.log('postal code', result[0].postalCode);
 
+
+			if (result.length === 0) {
+				setTown("");
+				setErrorMessage("No town/city matches this postal code.")
+			} else {
+				setTown(result[0].name);
+				setErrorMessage("");
+			}
 		} catch (error) {
 			console.error('Error fetching data: ', error);
 		}
 	}	
 
-
 	return (
 		<section className="w-full h-screen flex justify-center items-start bg-yellow-50">
 			<article className="flex flex-col items-center gap-2">
-				<h1 className="text-5xl mt-20">Postal Search System</h1>
+				<h1 className="text-5xl mt-20">Town/City and Postal Search System</h1>
 				
 				{/* Town/City Input */}
-				<form action="" className="mt-10">
-				<label htmlFor="" className="text-3xl px-3">Town/City</label>
-				<input
-					value={town} 
-					onChange={handleChangeTown} 
-					className="mt-2 px-2 bg-white border rounded-2xl " 
-					type="text" 
-				/>
-
-				<label htmlFor="" className="text-3xl px-3">Zip Code</label>
-				{postalCode == "array" ? (
-					<select 
-						id="postalCodeId" 
-						value={postalCode} 
-						onChange={handleChoosePostalCode}
-						className="mt-2 px-2 bg-white border rounded-2xl"
-					>
-						<option value="" disabled>Select a postal code from the list.</option>
-						{postalOptions.map((option: PostalOption) => (
-							<option key={option.postalCode} value={option.postalCode}>
-								{option.postalCode}
-							</option>
-						))}
-					</select>
-				) : (
+				<form className="mt-10">
+					<label htmlFor="" className="text-3xl px-3">Town/City</label>
 					<input
-						value={postalCode}
-						onChange={handleChangePostalCode}
+						value={town} 
+						onChange={handleChangeTown} 
 						className="mt-2 px-2 bg-white border rounded-2xl " 
 						type="text" 
 					/>
-				)}
+
+					{/* Postal Code */}
+					<label htmlFor="" className="text-3xl px-3">Postal Code</label>
+					{postalCode == "array" ? (
+						<select 
+							id="postalCodeId" 
+							value={postalCode} 
+							onChange={handleChoosePostalCode}
+							className="mt-2 px-2 bg-white border rounded-2xl"
+						>
+							<option value="" disabled>Select a postal code from the list.</option>
+							{postalOptions.map((option: PostalOption) => (
+								<option key={option.postalCode} value={option.postalCode}>
+									{option.postalCode}
+								</option>
+							))}
+						</select>
+					) : (
+						<input
+							value={postalCode}
+							onChange={handleChangePostalCode}
+							className="mt-2 px-2 bg-white border rounded-2xl " 
+							type="text" 
+						/>
+					)}
 				</form>
 				<h2 className="mt-10 text-2xl font-bold text-red-500">{errorMessage}</h2>
 
