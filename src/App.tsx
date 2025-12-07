@@ -9,6 +9,7 @@ function App() {
 	const [town, setTown] = useState<string>("");
 	const [postalCode, setPostalCode] = useState<string>("");
 	const [postalOptions, setPostalOptions] = useState<PostalOption[]>([]);
+	const [errorMessage, setErrorMessage] = useState<string>("");
 
 	// Get PostalCode from Town/City Name
 	const handleChangeTown = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,12 +31,16 @@ function App() {
 			//If town has one postalCode
 			if (postalArray.length === 1) {
 				setPostalCode(postalArray[0].postalCode)
+				setErrorMessage("");
 			//If town has more than one postalCodes
 			} else if (postalArray.length > 1) {
-				setPostalCode("");
+				setPostalCode("array");
 				setPostalOptions(postalArray);
+				setErrorMessage("");
 			} else {
 				console.log('This town deoes not exist in our database.')
+				setPostalCode("");
+				setErrorMessage("This town does not exist.");
 			}
 		} catch (error) {
 			console.error('Error fetching data: ', error);
@@ -88,7 +93,7 @@ function App() {
 				/>
 
 				<label htmlFor="" className="text-3xl px-3">Zip Code</label>
-				{!postalCode ? (
+				{postalCode == "array" ? (
 					<select 
 						id="postalCodeId" 
 						value={postalCode} 
@@ -111,6 +116,7 @@ function App() {
 					/>
 				)}
 				</form>
+				<h2 className="mt-10 text-2xl font-bold text-red-500">{errorMessage}</h2>
 
 			</article>
 
