@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface PostalOption {
 	postalCode: string;
@@ -11,7 +11,9 @@ function App() {
 	const [postalOptions, setPostalOptions] = useState<PostalOption[]>([]);
 	const [errorMessage, setErrorMessage] = useState<string>("");
 
-	// Get PostalCode from Town/City Name
+	
+	//------1. Town Input--------------//
+	// Insert Town/City
 	const handleChangeTown = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		const town = event.target.value;
 		setTown(town);
@@ -23,10 +25,13 @@ function App() {
 			setErrorMessage("");
 			return;
 		}
+	}
 
+	//Town/City: Fetch postal code
+	const fetchTownResults = async (townName: string) => {
 		const backendUrl= "https://openplzapi.org/de/"
 		try {
-			const url = backendUrl + 'Localities?name=' + town;
+			const url = backendUrl + 'Localities?name=' + townName;
 			const response = await fetch(url);
 			if (!response.ok) {
 				throw new Error(`Response status: ${response.status}`);
@@ -54,9 +59,21 @@ function App() {
 		}
 	}
 
+	useEffect(() => {
+		if (town.trim() === "") return; // no need to fetch if empty
+
+		const handler = setTimeout(() => {
+			fetchTownResults(town);
+		}, 1000);
+
+		return () => clearTimeout(handler);
+	}, [town]);
+
 	const handleChoosePostalCode = (event: React.ChangeEvent<HTMLSelectElement>) => {
 		setPostalCode(event.target.value);
 	}
+
+	//------------------------2. Postal Code Input-------------------------//
 
 	// Get Town/City Name from postalCode (UNFINISHED)
 	const handleChangePostalCode = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,10 +85,13 @@ function App() {
 			setTown("");
 			setErrorMessage("");
 		}
+	}
 
+	//Postal Code: Fetch Town/City
+	const fetchPostalResults = async (postalCodeNumber: string) => {
 		const backendUrl= "https://openplzapi.org/de/"
 		try {
-			const url = backendUrl + 'Localities?postalCode=' + postalCode;
+			const url = backendUrl + 'Localities?postalCode=' + postalCodeNumber;
 			console.log('url', url);
 			const response = await fetch(url);
 			if (!response.ok) {
@@ -92,7 +112,19 @@ function App() {
 		} catch (error) {
 			console.error('Error fetching data: ', error);
 		}
-	}	
+	}
+
+	//Debouncer for Wotn Input
+	useEffect(() => {
+		if (postalCode.trim() === "") return; // no need to fetch if empty
+
+		const handler = setTimeout(() => {
+			fetchPostalResults(postalCode);
+		}, 1000);
+
+		return () => clearTimeout(handler);
+	}, [postalCode]);
+
 	return (
 		<section className="w-full h-screen flex justify-center items-start bg-yellow-50">
 			<article className="flex flex-col items-center gap-2">
