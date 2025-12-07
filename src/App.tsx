@@ -16,6 +16,14 @@ function App() {
 		const town = event.target.value;
 		setTown(town);
 
+		//Reset if input in empty
+		if (town.trim() === "") {
+			setPostalCode("");
+			setPostalOptions([]);
+			setErrorMessage("");
+			return;
+		}
+
 		const backendUrl= "https://openplzapi.org/de/"
 		try {
 			const url = backendUrl + 'Localities?name=' + town;
@@ -29,14 +37,16 @@ function App() {
 			//If town has one postalCode
 			if (postalArray.length === 1) {
 				setPostalCode(postalArray[0].postalCode)
+				setPostalOptions([]);
 				setErrorMessage("");
 			//If town has more than one postalCodes
 			} else if (postalArray.length > 1) {
-				setPostalCode("array");
+				setPostalCode("");
 				setPostalOptions(postalArray);
 				setErrorMessage("");
 			} else {
 				setPostalCode("");
+				setPostalOptions([]);
 				setErrorMessage("This town does not exist.");
 			}
 		} catch (error) {
@@ -48,12 +58,16 @@ function App() {
 		setPostalCode(event.target.value);
 	}
 
-
-
 	// Get Town/City Name from postalCode (UNFINISHED)
 	const handleChangePostalCode = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		const postalCode = event.target.value;
 		setPostalCode(postalCode);
+
+		//Check if input is empty
+		if (postalCode.trim() === "") {
+			setTown("");
+			setErrorMessage("");
+		}
 
 		const backendUrl= "https://openplzapi.org/de/"
 		try {
@@ -79,7 +93,6 @@ function App() {
 			console.error('Error fetching data: ', error);
 		}
 	}	
-
 	return (
 		<section className="w-full h-screen flex justify-center items-start bg-yellow-50">
 			<article className="flex flex-col items-center gap-2">
@@ -97,7 +110,7 @@ function App() {
 
 					{/* Postal Code */}
 					<label htmlFor="" className="text-3xl px-3">Postal Code</label>
-					{postalCode == "array" ? (
+					{postalOptions.length > 1 ? (
 						<select 
 							id="postalCodeId" 
 							value={postalCode} 
