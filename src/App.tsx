@@ -72,8 +72,8 @@ function App() {
 
 	const handleChoosePostalCode = (event: React.ChangeEvent<HTMLSelectElement>) => {
 		setPostalCode(event.target.value);
+		setPostalOptions([]);
 	}
-
 	//------------------------2. Postal Code Input-------------------------//
 
 	// Get Town/City Name from postalCode (UNFINISHED)
@@ -138,7 +138,7 @@ function App() {
 
 				{/* Town/City Input */}
 				<form 
-					className="mt-10 p-5 rounded-2xl w-full flex flex-col gap-3 justify-center items-start bg-gray-300 lg:flex-row lg:w-[800px] lg:items-center
+					className="mt-10 p-5 rounded-2xl w-full flex flex-col gap-2 justify-center items-start bg-gray-300 lg:flex-row lg:w-[800px] lg:items-center
 
 				">
 					<label className="text-sm px-3 flex justify-center items-center gap-2 w-full sm:text-lg md:text-xl">
