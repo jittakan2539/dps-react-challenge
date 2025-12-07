@@ -8,6 +8,8 @@ function App() {
 	// Get PostalCode from Town/City Name
 	const handleChangeTown = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		const town = event.target.value;
+		setTown(town);
+
 		const backendUrl= "https://openplzapi.org/de/"
 		try {
 			const url = backendUrl + 'Localities?name=' + town;
@@ -19,7 +21,6 @@ function App() {
 
 			const result = await response.json();
 			console.log('result', result);
-			console.log('postal code', result[0].postalCode);
 
 		} catch (error) {
 			console.error('Error fetching data: ', error);
@@ -28,7 +29,9 @@ function App() {
 
 	// Get PostalCode from Town/City Name
 	const handleChangePostalCode = async (event: React.ChangeEvent<HTMLInputElement>) => {
-		const town = event.target.value;
+		const postalCode = event.target.value;
+		setPostalCode(postalCode);
+
 		const backendUrl= "https://openplzapi.org/de/"
 		try {
 			const url = backendUrl + 'Localities?name=' + town;
