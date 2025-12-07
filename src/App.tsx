@@ -1,9 +1,14 @@
 import { useState } from "react";
 
-function App() {
+interface PostalOption {
+	postalCode: string;
+	name: string;
+}
 
+function App() {
 	const [town, setTown] = useState<string>("");
-	const [postalCode, setPostalCode] = useState<string | number>("");
+	const [postalCode, setPostalCode] = useState<string>("");
+	const [postalOptions, setPostalOptions] = useState<PostalOption[]>([]);
 
 	// Get PostalCode from Town/City Name
 	const handleChangeTown = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,15 +24,31 @@ function App() {
 				throw new Error(`Response status: ${response.status}`);
 			}
 
-			const result = await response.json();
-			console.log('result', result);
+			const postalArray = await response.json();
+			console.log('postalArray', postalArray);
 
+			//If town has one postalCode
+			if (postalArray.length === 1) {
+				setPostalCode(postalArray[0].postalCode)
+			//If town has more than one postalCodes
+			} else if (postalArray.length > 1) {
+				setPostalCode("");
+				setPostalOptions(postalArray);
+			} else {
+				console.log('This town deoes not exist in our database.')
+			}
 		} catch (error) {
 			console.error('Error fetching data: ', error);
 		}
 	}
 
-	// Get PostalCode from Town/City Name
+	const handleChoosePostalCode = (event: React.ChangeEvent<HTMLSelectElement>) => {
+		setPostalCode(event.target.value);
+	}
+
+
+
+	// Get Town/City Name from postalCode (UNFINISHED)
 	const handleChangePostalCode = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		const postalCode = event.target.value;
 		setPostalCode(postalCode);
@@ -67,12 +88,28 @@ function App() {
 				/>
 
 				<label htmlFor="" className="text-3xl px-3">Zip Code</label>
-				<input
-					value={postalCode}
-					onChange={handleChangePostalCode}
-					className="mt-2 px-2 bg-white border rounded-2xl " 
-					type="text" 
-				/>
+				{!postalCode ? (
+					<select 
+						id="postalCodeId" 
+						value={postalCode} 
+						onChange={handleChoosePostalCode}
+						className="mt-2 px-2 bg-white border rounded-2xl"
+					>
+						<option value="" disabled>Select a postal code from the list.</option>
+						{postalOptions.map((option: PostalOption) => (
+							<option key={option.postalCode} value={option.postalCode}>
+								{option.postalCode}
+							</option>
+						))}
+					</select>
+				) : (
+					<input
+						value={postalCode}
+						onChange={handleChangePostalCode}
+						className="mt-2 px-2 bg-white border rounded-2xl " 
+						type="text" 
+					/>
+				)}
 				</form>
 
 			</article>
